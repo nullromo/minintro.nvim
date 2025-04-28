@@ -18,14 +18,6 @@ local autocmd_group = vim.api.nvim_create_augroup(PLUGIN_NAME, {})
 local highlight_ns_id = vim.api.nvim_create_namespace(PLUGIN_NAME)
 local minintro_buff = -1
 
-local function unlock_buf(buf)
-	vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
-end
-
-local function lock_buf(buf)
-	vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
-end
-
 local function draw_minintro(buf, logo_width, logo_height)
 	local window = vim.fn.bufwinid(buf)
 	local screen_width = vim.api.nvim_win_get_width(window)
@@ -47,10 +39,8 @@ local function draw_minintro(buf, logo_width, logo_height)
 		table.insert(adjusted_logo, col_offset .. line)
 	end
 
-	unlock_buf(buf)
 	vim.api.nvim_buf_set_lines(buf, 1, 1, true, top_space)
 	vim.api.nvim_buf_set_lines(buf, start_row, start_row, true, adjusted_logo)
-	lock_buf(buf)
 
 	vim.api.nvim_buf_set_extmark(buf, highlight_ns_id, start_row, start_col, {
 		end_row = start_row + INTRO_LOGO_HEIGHT,
@@ -81,10 +71,12 @@ local function set_options()
 end
 
 local function redraw()
-	unlock_buf(minintro_buff)
 	vim.api.nvim_buf_set_lines(minintro_buff, 0, -1, true, {})
-	lock_buf(minintro_buff)
 	draw_minintro(minintro_buff, INTRO_LOGO_WIDTH, INTRO_LOGO_HEIGHT)
+end
+
+local function open_new_file()
+    vim.cmd("enew")
 end
 
 local function display_minintro(payload)
@@ -107,6 +99,12 @@ local function display_minintro(payload)
 		buffer = minintro_buff,
 		callback = redraw
 	})
+
+    vim.api.nvim_create_autocmd({ "InsertEnter" }, {
+        group = autocmd_group,
+        buffer = minintro_buff,
+        callback = open_new_file
+    })
 end
 
 local function setup(options)
