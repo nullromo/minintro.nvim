@@ -3,6 +3,9 @@ was not interested in
 [fixing this plugin](https://github.com/eoh-bse/minintro.nvim/pull/13) nor
 [accepting pull requests](https://github.com/eoh-bse/minintro.nvim/pull/14).
 
+I am open to any and all feedback and suggestions in the form of issues, pull
+requests, and e-mails.
+
 # nullromo/minintro.nvim
 
 If you just want a simple and lightweight startup intro that works, this plugin
